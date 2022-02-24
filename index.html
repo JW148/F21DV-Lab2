@@ -1,0 +1,235 @@
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<style>
+  text:hover {
+    cursor: pointer;
+  }
+
+  h1,
+  p {
+    font-family: "Arial";
+    margin-bottom: 5px;
+    margin-top: 0px;
+    text-align: center;
+  }
+</style>
+
+<body oncontextmenu="return false">
+  <h1 style="text-align: center">Lab 2: Dynamic and Interactive</h1>
+  <p>Data Visualization and Analytics</p>
+</body>
+
+<script>
+  // this data is used to show the different sections (what exercises in each section and such)
+  const sections = [
+    {
+      section: "Part 1: CSS Effects/Animations",
+      exercises: [1, 2],
+      links: [],
+    },
+    {
+      section: "Part 2: Events",
+      exercises: [3, 4, 5],
+      links: [],
+    },
+    {
+      section: "Part 3: D3 Transitions",
+      exercises: [6, 7, 8, 9, 10],
+      links: [],
+    },
+    {
+      section: "Part 4: Animated Chart",
+      exercises: [11],
+      links: [],
+    },
+    {
+      section: "Part 5: Changing Data and Transitioning",
+      exercises: [12, 13, 14],
+      links: [],
+    },
+    {
+      section: "Part 6:  Pie Chart",
+      exercises: [15, 16],
+      links: [],
+    },
+    {
+      section: "Part 7:  D3 Force layout",
+      exercises: [17, 18],
+      links: [],
+    },
+  ];
+
+  // links to all the exercises on jsfiddle
+  const exercises = [
+    "https://jsfiddle.net/jw148/cn9hdtL1/", //1
+    "https://jsfiddle.net/jw148/cn9hdtL1/1/", //2
+    "https://jsfiddle.net/jw148/cn9hdtL1/2/", //3
+    "https://jsfiddle.net/jw148/cn9hdtL1/3/", //4
+    "https://jsfiddle.net/jw148/cn9hdtL1/4/", //5
+    "https://jsfiddle.net/jw148/cn9hdtL1/5/", //6,7,8
+    "https://jsfiddle.net/jw148/cn9hdtL1/6/", //9
+    "https://jsfiddle.net/jw148/cn9hdtL1/7/", //10
+    "https://jsfiddle.net/jw148/cn9hdtL1/8/", //11
+    "https://jsfiddle.net/jw148/cn9hdtL1/9/", //12,13,14
+    "https://jsfiddle.net/jw148/cn9hdtL1/10/", //15,16,17
+    "https://jsfiddle.net/jw148/cn9hdtL1/11/", //18,19,20,21
+    "https://jsfiddle.net/jw148/cn9hdtL1/12/", //22
+    "https://jsfiddle.net/jw148/cn9hdtL1/13/", //23
+    "https://jsfiddle.net/jw148/cn9hdtL1/14/", //24,25,26
+    "https://jsfiddle.net/jw148/cn9hdtL1/15/", //27
+    "https://jsfiddle.net/jw148/cn9hdtL1/16/", //28,29,30,31
+    "", //32
+  ];
+
+  const arr = [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 15, 18, 22, 23, 24, 27, 28, 32];
+
+  // sets the svg width to the current browser width and the height is a static value
+  var width = window.innerWidth - 30;
+  var height = 1080;
+
+  //used to set a different colour for each section's rect
+  let dom = d3.range(14);
+  let color = d3.scaleOrdinal().domain(dom).range(d3.schemeSet3);
+  var myColor1 = d3
+    .scaleLinear()
+    .domain([0, 14])
+    .range(["lightseagreen", "lightslategrey"]);
+  var myColor2 = d3
+    .scaleSequential()
+    .domain(dom)
+    .interpolator(d3.interpolatePuRd);
+  var myColor4 = d3
+    .scaleOrdinal()
+    .domain(dom)
+    .range(["lightgrey", "gainsboro"]);
+
+  //append the svg to the body
+  var svg = d3
+    .select("body")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+  //draws the rects for each section
+  svg
+    .selectAll("g")
+    .data(sections)
+    .enter()
+    .append("rect")
+    .attr("width", width)
+    .attr("height", function (d) {
+      return d.exercises.length * 60;
+    })
+    .attr("y", function (d) {
+      return (d.exercises[0] - 1) * 60;
+    })
+    .style("fill", function (d, i) {
+      return myColor4(i);
+    });
+
+  // draws the description text of each section
+  svg
+    .selectAll("g")
+    .data(sections)
+    .enter()
+    .append("text")
+    .attr("x", width / 5)
+    .attr("y", function (d) {
+      return (d.exercises[0] - 1) * 60 + (d.exercises.length * 60) / 2;
+    })
+    .style("fill", "black")
+    .style("font-size", "18px")
+    .style("font-family", "Arial")
+    .attr("dy", ".35em")
+    .attr("text-anchor", "middle")
+    .style("pointer-events", "none")
+    .text(function (d) {
+      return d.section;
+    });
+
+  //draw rects for 'buttons'. first appends an <a> element and then a <rect> so that the <rect> object behaves like a button
+  //when it's clicked
+  svg
+    .selectAll("g")
+    .data(arr)
+    .enter()
+    .append("a")
+    .attr("xlink:href", function (d, i) {
+      return exercises[i];
+    })
+    //adds an onmousedown event to the a element
+    .attr("onmousedown", function (d) {
+      //when the event occurs (a mouse button is pressed on it) then the open html function
+      //is called with the mouse event and a link to the corresponding exercise's html page
+      switch (d) {
+        case 6:
+          return `openHTML(event, "./exercises/exercise678.html")`;
+        case 12:
+          return `openHTML(event, "./exercises/exercise121314.html")`;
+        case 15:
+          return `openHTML(event, "./exercises/exercise151617.html")`;
+        case 18:
+          return `openHTML(event, "./exercises/exercise18192021.html")`;
+        case 24:
+          return `openHTML(event, "./exercises/exercise242526.html")`;
+        case 28:
+          return `openHTML(event, "./exercises/exercise28293031.html")`;
+        default:
+          console.log("here");
+          return `openHTML(event, "./exercises/exercise${d}.html")`;
+      }
+    })
+    .append("rect")
+    .attr("x", width / 2 - 90)
+    .attr("y", function (d, i) {
+      return i * 60 + 10;
+    })
+    .attr("height", 40)
+    .attr("width", 170)
+    .style("fill", "floralwhite")
+    .attr("rx", 5)
+    .attr("ry", 5);
+
+  // draw the text for the buttons
+  svg
+    .selectAll("g")
+    .data(arr)
+    .enter()
+    .append("text")
+    .attr("x", width / 2 - 5)
+    .attr("y", function (d, i) {
+      return i * 60 + 30;
+    })
+    .style("fill", "black")
+    .style("font-size", "15px")
+    .style("font-family", "Arial")
+    .attr("dy", ".35em")
+    .attr("text-anchor", "middle")
+    .style("pointer-events", "none")
+    .text(function (d) {
+      switch (d) {
+        case 6:
+          return "Exercises 6, 7, 8";
+        case 12:
+          return "Exercises 12, 13, 14";
+        case 15:
+          return "Exercises 15, 16, 17";
+        case 18:
+          return "Exercises 18, 19, 20, 21";
+        case 24:
+          return "Exercises 24, 25, 26";
+        case 28:
+          return "Exercises 28, 29, 30, 31";
+        default:
+          return "Exercise " + d;
+      }
+    });
+
+  function openHTML(event, exercise) {
+    if (event.button === 2) {
+      //checks to see if the mouse event is a right click (2)
+      console.log(exercise);
+      window.open(exercise); //if it is, then open the exercise's html page (left click still naviates to the jsfiddle page)
+    }
+  }
+</script>
