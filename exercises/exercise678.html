@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+
+  <body>
+    <script>
+      //append a div to the body and give it some initial styling
+      d3.select("body")
+        .append("div")
+        .style("width", "100px") //removing the px units results in the div not being rendered
+        .style("height", "100px")
+        .style("background-color", "blue");
+
+      //add a mouse over event with a transition to animate the change in the div's style
+      d3.selectAll("div").on("mouseover", function (event) {
+        d3.select(this)
+          .transition()
+          .duration(1000)
+          .style("background-color", "red")
+          .style("width", "200px") //removing the px units results in the div not being rendered
+          .style("height", "200px")
+          .transition()
+          .duration(2000)
+          .style("background-color", "green")
+          .style("width", "100px") //removing the px units results in the div not being rendered
+          .style("height", "100px");
+      });
+    </script>
+  </body>
+</html>

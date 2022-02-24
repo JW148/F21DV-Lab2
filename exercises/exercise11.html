@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+  <body>
+    <script>
+      //make an svg element and append it to the body
+      var svg = d3
+        .select("body")
+        .append("svg")
+        .attr("width", 400)
+        .attr("height", 400)
+        .style("border", "1px solid green");
+
+      //make a text element and append it to the svg with some initial styling
+      svg
+        .append("text")
+        .attr("x", 120)
+        .attr("y", 200)
+        .style("font-size", "15px")
+        .style("color", "blue")
+        .text("Hover to see this text change");
+
+      //add mouseover and mouseout events to the text element
+      d3.selectAll("text")
+        .on("mouseover", function (event) {
+          d3.select(this)
+            .transition()
+            .ease(d3.easeBounce)
+            .duration(1000)
+            .style("color", "red")
+            .style("font-size", "10px"); //changes the font-size instead of using 'transform: scale' otherwise it does not remain centred
+        })
+        .on("mouseout", function () {
+          d3.select(this)
+            .transition()
+            .ease(d3.easeBounce)
+            .duration(1000)
+            .style("background-color", "red")
+            .style("font-size", "15px");
+        });
+    </script>
+  </body>
+</html>

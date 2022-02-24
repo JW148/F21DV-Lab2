@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      .pulse {
+        border: 1px solid blue;
+        fill: lightblue;
+        stroke: purple;
+        -webkit-transform: scale(1);
+        -webkit-transform-origin: 50% 50%;
+        transform: scale(1);
+        transform-origin: 50% 50%;
+      }
+
+      .pulse:hover {
+        -webkit-animation-name: pulsar;
+        -webkit-animation-duration: 1s;
+        -webkit-animation-iteration-count: infinite;
+        -webkit-animation-direction: alternate;
+        animation-name: pulsar;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+        -webkit-transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
+      }
+
+      /* @keyframes specifies the animation code (like the d3.transition() function)
+            Animation is created by gradually changing from one set of CSS styles to another */
+      @keyframes pulsar {
+        from {
+          fill: red;
+        }
+        to {
+          fill: blue;
+          transform: scale(
+            1,
+            1
+          ); /* changed the scale to one to one so that the dots remain stationary*/
+          transform-origin: 50% 50%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      //********script for the line graph with svg circles taken from lab 1, exercise 25**********
+
+      // Set Dimensions
+      const xSize = 600;
+      const ySize = 600;
+      const margin = 40;
+      const xMax = xSize - margin * 2;
+      const yMax = ySize - margin * 2;
+
+      // Create Random Points
+      const numPoints = 100;
+      const data = [];
+      for (let i = 0; i < numPoints; i++) {
+        data.push({
+          x: i / 100,
+          y: Math.sin((6.2 * i) / 100),
+        });
+      }
+
+      // Get the 'limits' of the data - the full extent (mins and max)
+      // so the plotted data fits perfectly
+      const xExtent = d3.extent(data, (d) => {
+        return d.x;
+      });
+      const yExtent = d3.extent(data, (d) => {
+        return d.y;
+      });
+
+      // Append SVG Object to the Page
+      const svg = d3
+        .select("body")
+        .append("svg")
+        .attr("width", xSize)
+        .attr("height", ySize)
+        .append("g")
+        .attr("transform", "translate(" + margin + "," + margin + ")");
+
+      // X Axis
+      const x = d3
+        .scaleLinear()
+        .domain([xExtent[0], xExtent[1]])
+        .range([0, xMax]);
+
+      // bottom
+      svg
+        .append("g")
+        .attr("transform", "translate(0," + yMax + ")")
+        .call(d3.axisBottom(x))
+        .attr("color", "green"); // make bottom axis green
+
+      // top
+      svg.append("g").call(d3.axisTop(x));
+
+      // Y Axis
+      const y = d3
+        .scaleLinear()
+        .domain([yExtent[0], yExtent[1]])
+        .range([yMax, 0]);
+
+      // left y axis
+      svg.append("g").call(d3.axisLeft(y));
+
+      // right y axis
+      svg
+        .append("g")
+        .attr("transform", `translate(${yMax},0)`)
+        .call(d3.axisRight(y));
+
+      function drawLine(data, colour) {
+        // Add the line
+        svg
+          .append("path")
+          .datum(data)
+          .attr("fill", "none")
+          .attr("stroke", colour)
+          .attr("stroke-width", 1.5)
+          .attr(
+            "d",
+            d3
+              .line()
+              .x(function (d) {
+                return x(d.x);
+              })
+              .y(function (d) {
+                return y(d.y);
+              })
+          );
+
+        svg
+          .selectAll("dot")
+          .data(data)
+          .enter()
+          .append("circle") //draws circles on the line based on the data
+          .attr("cx", function (d) {
+            return x(d.x); //uses the x axis scale to get the correct x position for the circle
+          })
+          .attr("cy", function (d) {
+            return y(d.y); //uses the y axis scale to get the correct y position for the circle
+          })
+          .attr("r", 8) //increased the radius so the effect can be seen easier
+          .classed("pulse", true)
+          .style("fill", "red");
+      }
+
+      drawLine(data, "green");
+    </script>
+  </body>
+</html>

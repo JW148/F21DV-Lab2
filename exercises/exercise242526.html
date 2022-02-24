@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+  <body>
+    <script>
+      //interpolation is a method of calculating new data values based on a range of already known data.
+      //d3.interpolate detects the type of values the data contains (numbers, colours, strings, dates, arrays, objects)
+      //and then uses the appropriate interpolation function (e.e. interpolateNumber, interpolateString, interpolateArray, etc.)
+      //When the interpolate function receives a pair of arrays, the type of each element is detected in turn, and interpolated with its respective method.
+      //interpolateArray must receive two arrays of the same length/structure (and can contain arrays and objects themselves)
+      //once an interplolation function has been made, a value between 0 and 1 can be passed to it to return the interpolated value(s)
+      let intr = d3.interpolate([20, 40, 4], [1, 12, 10]);
+      console.log("Type of returned function is: ", typeof intr);
+      console.log(intr(0.2));
+
+      d3.select("body").append("h1").text("Exercise 24");
+      d3.select("body")
+        .append("p")
+        .text("Type of returned function is: " + typeof intr);
+      d3.select("body")
+        .append("p")
+        .text("The result of 'intr(0.2)' is: [" + intr(0.2) + "]");
+
+      let cc = d3.interpolate("red", "green");
+      console.log(cc(0.5));
+      d3.select("body").append("h1").text("Exercise 25");
+      d3.select("body")
+        .append("p")
+        .text("The interpolated colour value for 'cc(0.5)' is: " + cc(0.5));
+      d3.select("body")
+        .append("div")
+        .attr("width", "50px")
+        .attr("height", "50px")
+        .style("background-color", cc(0.5));
+
+      let dateIntr = d3.interpolate(
+        new Date("2000-03-11"),
+        new Date("1973-03-01")
+      );
+      d3.select("body").append("h1").text("Exercise 26");
+      d3.select("body")
+        .append("p")
+        .text("The d3.interpolate function can be used to interpolate dates: ")
+        .append("p")
+        .text("The result of 'dateIntr(0) is: " + dateIntr(0))
+        .append("p")
+        .text("The result of 'dateIntr(0.5) is: " + dateIntr(0.5))
+        .append("p")
+        .text("The result of 'dateIntr(1) is: " + dateIntr(1));
+
+      console.log(dateIntr(1));
+    </script>
+  </body>
+</html>

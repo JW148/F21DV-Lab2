@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      div {
+        position: relative;
+        background-color: yellow;
+        padding: 20px;
+        display: none;
+      }
+
+      p:hover + div {
+        position: absolute;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      //********* the css hover only works on the last appended div ************
+      let data = ["A", "B", "C", "D"];
+      let value = [1, 2, 3, 4];
+      d3.select("body")
+        .selectAll("p")
+        .data(data)
+        .enter()
+        .append("p")
+        .attr("class", (d, i) => "p" + data[i])
+        .text((d) => d);
+
+      d3.select("body")
+        .selectAll("div")
+        .data(value)
+        .enter()
+        .append("div")
+        .attr("class", (d, i) => "div" + data[i])
+        .text((d) => d);
+    </script>
+  </body>
+</html>

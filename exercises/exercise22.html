@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+  <body>
+    <button onclick="update(data1, '#69b3a2')">Variable 1</button>
+    <button onclick="update(data2, 'steelblue')">Variable 2</button>
+    <script>
+      // create 2 data sets
+      const data1 = [
+        { group: "A", value: 5 },
+        { group: "B", value: 20 },
+        { group: "C", value: 9 },
+      ];
+      const data2 = [
+        { group: "A", value: 10 },
+        { group: "B", value: 2 },
+        { group: "C", value: 22 },
+        { group: "D", value: 15 },
+      ];
+
+      // set the dimensions and margins of the svg
+      const margin = { top: 30, right: 30, bottom: 70, left: 60 };
+      const width = 460 - margin.left - margin.right;
+      const height = 400 - margin.top - margin.bottom;
+
+      // append the svg object to the body of the page
+      let svg = d3
+        .select("body")
+        .append("div")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      //make the scales with only the domain for now (need the data to make the range)
+      //domain is dependant on the size of the svg, not on the data
+      let x = d3.scaleBand().range([0, width]).padding(0.2);
+      let y = d3.scaleLinear().range([height, 0]);
+
+      function update(data, col) {
+        //remove any existing axes and bars
+        //(bars and axes have been given classes so that they are removed every time
+        // new data is loaded)
+        d3.selectAll(".axis").remove();
+        d3.selectAll(".bar").remove();
+
+        //sets the domain for the x and y scales based on the data values
+        x.domain(
+          data.map(function (d) {
+            return d.group;
+          })
+        );
+        y.domain([
+          0,
+          d3.max(data, function (d) {
+            return d.value;
+          }),
+        ]);
+
+        //append bottom axis using x scale
+        svg
+          .append("g")
+          .attr("class", "axis")
+          .transition()
+          .duration(1000)
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x));
+
+        //append left axis using y scale
+        svg
+          .append("g")
+          .attr("class", "axis")
+          .transition()
+          .duration(1000)
+          .call(d3.axisLeft(y));
+
+        //append top axis to the graph using x scale
+        svg
+          .append("g")
+          .attr("class", "axis")
+          .transition()
+          .duration(1000)
+          .call(d3.axisTop(x));
+
+        //append right axis using y scale
+        svg
+          .append("g")
+          .attr("class", "axis")
+          .transition()
+          .duration(1000)
+          .attr("transform", "translate(" + width + ",0)")
+          .call(d3.axisRight(y));
+
+        //make the bars
+        let bars = svg.selectAll("rect").data(data);
+        bars
+          .enter()
+          .append("rect")
+          .attr("class", "bar")
+          .merge(bars)
+          .transition()
+          .duration(1000)
+          .attr("x", function (d) {
+            return x(d.group);
+          })
+          .attr("y", function (d) {
+            return y(d.value);
+          })
+          .attr("width", x.bandwidth())
+          .attr("height", function (d) {
+            return height - y(d.value);
+          })
+          .attr("fill", col);
+
+        //appends text to the bar (its value) on a mouseover event
+        svg.selectAll("rect").on("mouseover", function (event, d, i) {
+          console.log(x(d.group));
+          svg
+            .append("text")
+            .attr("class", "val")
+            .attr("x", function () {
+              return x(d.group) + x.bandwidth() / 2; //x.bandwidth() / 2 to centre text on the bar
+            })
+            .attr("y", function () {
+              return y(d.value) - 5;
+            })
+            .text(d.value);
+        });
+
+        svg.selectAll("rect").on("mouseout", function (event, d, i) {
+          d3.selectAll(".val").remove();
+        });
+      }
+
+      update(data1, "#69b3a2");
+    </script>
+  </body>
+</html>

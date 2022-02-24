@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+
+  <body>
+    <script>
+      var svg = d3
+        .select("body")
+        .append("svg")
+        .attr("width", 800)
+        .attr("height", 800)
+        .style("border", "1px solid green")
+        .on("mousemove", function (event) {
+          //remove is called so that there is only one text element appended to the svg at a time
+          //otherwise it leave a trail of text elements behind the mouse
+          //(basically just clears the canvas of text elements)
+          svg.selectAll("text").remove();
+
+          //text is appended to the svg at the coordinates from the d3.pointer method
+          //and its text is set to those coordinates
+          svg
+            .append("text")
+            .attr("x", d3.pointer(event)[0])
+            .attr("y", d3.pointer(event)[1] + 5)
+            .text(
+              "X: " +
+                Math.round(d3.pointer(event)[0]) +
+                " Y: " +
+                Math.round(d3.pointer(event)[1])
+            );
+        });
+    </script>
+  </body>
+</html>

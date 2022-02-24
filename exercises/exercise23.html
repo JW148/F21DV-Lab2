@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+  <body>
+    <button onclick="update(data1, '#69b3a2')">Variable 1</button>
+    <button onclick="update(data2, 'steelblue')">Variable 2</button>
+    <script>
+      // create 2 data sets of random points (sin and cos waves)
+      const data1 = [];
+      for (let i = 0; i < 100; i++) {
+        data1.push({
+          x: i / 100,
+          y: Math.sin((6.2 * i) / 100),
+        });
+      }
+
+      const data2 = [];
+      for (let i = 0; i < 50; i++) {
+        data2.push({
+          x: i / 100,
+          y: Math.cos((6.2 * i) / 100),
+        });
+      }
+
+      // set the dimensions and margins of the svg
+      const margin = { top: 30, right: 30, bottom: 70, left: 60 };
+      const width = 460 - margin.left - margin.right;
+      const height = 400 - margin.top - margin.bottom;
+
+      // append the svg object to the body of the page
+      let svg = d3
+        .select("body")
+        .append("div")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      //make the scales with only the domain for now (need the data to make the range)
+      let x = d3.scaleLinear().range([0, width]);
+      let y = d3.scaleLinear().range([height, 0]);
+
+      function update(data, col) {
+        //remove any existing axes and bars
+        //(bars and axes have been given classes so that they are removed every time
+        // new data is loaded)
+        d3.selectAll(".axis").remove();
+        d3.selectAll(".bar").remove();
+        d3.selectAll(".path").remove();
+
+        // Get the 'limits' of the data - the full extent (mins and max)
+        // so the plotted data fits perfectly
+        const xExtent = d3.extent(data, (d) => {
+          return d.x;
+        });
+        const yExtent = d3.extent(data, (d) => {
+          return d.y;
+        });
+
+        x.domain([xExtent[0], xExtent[1]]);
+        y.domain([yExtent[0], yExtent[1]]);
+
+        //append bottom axis using x scale
+        svg
+          .append("g")
+          .attr("class", "axis")
+          .transition()
+          .duration(1000)
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x));
+
+        //append left axis using y scale
+        svg
+          .append("g")
+          .attr("class", "axis")
+          .transition()
+          .duration(1000)
+          .call(d3.axisLeft(y));
+
+        //append top axis to the graph using x scale
+        svg
+          .append("g")
+          .attr("class", "axis")
+          .transition()
+          .duration(1000)
+          .call(d3.axisTop(x));
+
+        //append right axis using y scale
+        svg
+          .append("g")
+          .attr("class", "axis")
+          .transition()
+          .duration(1000)
+          .attr("transform", "translate(" + width + ",0)")
+          .call(d3.axisRight(y));
+
+        //draw the line on the graph
+        // Add the line
+        svg
+          .append("path")
+          .attr("class", "path")
+          .datum(data)
+          .transition()
+          .duration(1000)
+          .attr("fill", "none")
+          .attr("stroke", col)
+          .attr("stroke-width", 1.5)
+          .attr(
+            "d",
+            d3
+              .line()
+              .x(function (d) {
+                return x(d.x);
+              })
+              .y(function (d) {
+                return y(d.y);
+              })
+          );
+      }
+
+      update(data1, "#69b3a2");
+    </script>
+  </body>
+</html>

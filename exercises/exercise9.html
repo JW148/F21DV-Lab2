@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      div {
+        font-family: "Arial";
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+      //append div with 'bounce' easing type
+      d3.select("body")
+        .append("div")
+        .text("easeBounce:")
+        .append("div")
+        .style("width", "100px")
+        .style("height", "100px")
+        .style("background-color", "blue")
+        .style("transform", "scale(1.0)")
+        .transition()
+        .ease(d3.easeBounce)
+        .duration(1000)
+        .style("background-color", "red")
+        .style("transform", "scale(0.5)");
+
+      //append div with 'back' easing type
+      d3.select("body")
+        .append("div")
+        .text("easeBack:")
+        .append("div")
+        .style("width", "100px")
+        .style("height", "100px")
+        .style("background-color", "blue")
+        .style("transform", "scale(1.0)")
+        .transition()
+        .ease(d3.easeBack)
+        .duration(1000)
+        .style("background-color", "red")
+        .style("transform", "scale(0.5)");
+
+      //append div with 'elastic' easing type
+      d3.select("body")
+        .append("div")
+        .text("easeElastic:")
+        .append("div")
+        .style("width", "100px")
+        .style("height", "100px")
+        .style("background-color", "blue")
+        .style("transform", "scale(1.0)")
+        .transition()
+        .ease(d3.easeElastic)
+        .duration(1000)
+        .style("background-color", "red")
+        .style("transform", "scale(0.5)");
+    </script>
+  </body>
+</html>
